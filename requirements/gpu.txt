@@ -1,0 +1,4 @@
+-r base.txt
+tensorflow[and-cuda]==2.20.0
+transformers==4.57.3
+datasets==4.4.2
