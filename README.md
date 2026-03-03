@@ -1,6 +1,6 @@
 # Sentimental
 
-A multi-class text classification model intended for support prioritization and analytics
+A multi-class text classification model trained on Sentiment Analysis for Mental Health dataset 
 
 ![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https://github.com/babaksoft/sentimental/raw/refs/heads/master/pyproject.toml)
 ![Static Badge](https://img.shields.io/badge/task-classification-orange)
