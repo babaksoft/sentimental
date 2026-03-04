@@ -1,7 +1,5 @@
 # Sentimental
 
-A multi-class text classification model trained on Sentiment Analysis for Mental Health dataset 
-
 ![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https://github.com/babaksoft/sentimental/raw/refs/heads/master/pyproject.toml)
 ![Static Badge](https://img.shields.io/badge/task-classification-orange)
 ![Static Badge](https://img.shields.io/badge/framework-sklearn-orange)
@@ -11,36 +9,56 @@ A multi-class text classification model trained on Sentiment Analysis for Mental
 
 ## Business problem
 
-(TODO: Write a short paragraph about the main business problem this model is trying to solve)
+Using a dataset of user-generated text labelled with coarse-grained mental/emotional categories,
+we need a text classification model that can be used in the context of support prioritization and
+analytics systems.
 
-## Dataset summary
+**Very important notice**
 
-(TODO: Provide a quick introduction of dataset features and target in tabular Markdown format)
+As dataset labels are **not clinically validated**, we'll treat them strictly as
+language patterns and **not medical facts**. Consequently, any system built with
+this model should not be used for any of the following purposes :
+- Diagnosis
+- Clinical decision-making
+- Individual risk prediction
 
-## Performance metric(s)
+## Dataset
 
-(TODO: Write a short paragraph that states optimized metric(s) in this model, as well as the rationale for choosing this metric)
+- Source: [Sentiment Analysis for Mental Health](https://www.kaggle.com/datasets/suchintikasarkar/sentiment-analysis-for-mental-health)
+- Task: Multi-class text classification
+- Samples: 53,043 (before cleaning)
+- Features: 2 input features + 1 target
 
-## Final model
 
-(TODO: Write a short paragraph about the final model, display overall metrics in tabular Markdown format)
+|      Feature    | Description                                                               |
+|-----------------|---------------------------------------------------------------------------|
+| ID              | Row identifier                                                            |
+| statement       | User-generated text (variable length)                                     |
+| status          | Mental health state associated with user text (target, 7 distinct values) |
 
-### Confusion matrix
 
-(TODO: Link to a saved CM plot from *metrics* folder)
+## Data Ingestion & Validation
 
-## Try it out!
+Initial raw data analysis revealed several quality issues:
 
-(TODO: Provide clear instructions for how to make a prediction with this model)
+- ID column
+- Missing data
+- Duplicate records
+- Conflicting labels
+- Class imbalance
 
-### Use cloud-deployed model
+Cleaning steps:
+- Dropped ID column
+- Removed rows with missing data (362): 53,043 → 52,681 
+- Removed duplicates (1,588): 52,681 → 51,093
+- Removed label conflicts (38): 51,093 → 51,055
 
-(TODO: Provide sample code for making a prediction using the Web API deployed in AWS)
+The cleaned dataset was split into:
+- Train: 70%
+- Validation: 15%
+- Test: 15%
 
-### Use local model
-
-(TODO: Provide sample code for starting a local Web API inside Docker and making a prediction)
-
-## Train the model
-
-(TODO: Provide clear instructions for training your final model inside a Docker container - demonstrates *reproducible training*)
+All dataset splits are:
+- Stratified on class labels
+- Logged in MLflow
+- Versioned and frozen using DVC
