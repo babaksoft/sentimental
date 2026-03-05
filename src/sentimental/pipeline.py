@@ -11,13 +11,12 @@ from .config import config
 
 USER_HANDLE_RX = r"@[\S]+"
 HASH_TAG_RX = r"#([\S]+)"
-HTML_TAG_RX = r"<[a-zA-Z0-9\s/='\"]+>"
+HTML_TAG_RX = r"<[a-zA-Z0-9\s_/='\"]+>"
 HTML_OBJECT_RX = r"&?[a-z]+;"
-UNICODE_LIT_RX = r"\\u[0-9A-Fa-f]+"
 UNICODE_OBJ_RX = r"#x[0-9a-fA-F]+;"
 EXPAND_TEXT_RX = r"([a-zA-Z]\s){3,}"
 WEB_URL_RX = r"((www\.[\S]+)|(https?://[\S]+))"
-EXTRA_CHARS_RX = r"\W+([\w]{2,})\W+"
+PUNCT_CHARS_RX = r"([\w]+)[\.?!,:;'\"]+"
 
 
 def get_values(x):
@@ -40,7 +39,6 @@ def clean_text(text: str) -> str:
     cleaned = cleaned.lower()
 
     # Remove Unicode strings
-    cleaned = re.sub(UNICODE_LIT_RX, "", cleaned)
     cleaned = re.sub(UNICODE_OBJ_RX, "", cleaned)
 
     # Remove URLs, HTML tags and HTML objects
@@ -57,8 +55,8 @@ def clean_text(text: str) -> str:
     # Replace expanded text (e.g. t w i t t e r) with normal form
     cleaned = re.sub(EXPAND_TEXT_RX, replace_expanded, cleaned)
 
-    # Remove leading and trailing punctuations and non-words (except emoticons)
-    #cleaned = re.sub(EXTRA_CHARS_RX, r"\1", cleaned)
+    # Remove trailing punctuation character(s) (except emoticons)
+    cleaned = re.sub(PUNCT_CHARS_RX, r"\1", cleaned)
 
     # Replace extra whitespace and new-line with a single space
     cleaned = re.sub(r"\s+", " ", cleaned)
