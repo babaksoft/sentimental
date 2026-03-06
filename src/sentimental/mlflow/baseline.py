@@ -11,7 +11,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 from ..config import config
 from ..pipeline import build_pipeline
-from ..utils import plot_confusion_matrix
+from ..utils import plot_confusion_matrix, get_data
 
 
 def evaluate(df: pd.DataFrame, run_name: str, clean: bool=False):
@@ -88,7 +88,10 @@ def evaluate(df: pd.DataFrame, run_name: str, clean: bool=False):
         mlflow.log_params(params)
         if clean:
             pipeline.fit(x, y)
-            plot_confusion_matrix(pipeline, x, y)
+            df_val = get_data("validation")
+            x_val = df_val.drop(config.TARGET, axis=1)
+            y_val = df_val[config.TARGET]
+            plot_confusion_matrix(pipeline, x_val, y_val)
             path = config.METRICS_DIR / f"cm_baseline.png"
             mlflow.log_artifact(path)
         mlflow.end_run()
