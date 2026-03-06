@@ -101,3 +101,10 @@ def test_removes_words_with_non_ascii_characters():
     text = "Only Iâm ASCII characters are thisð allowed"
     output = clean_text(text)
     assert output == "only ascii characters are allowed"
+
+
+def test_keeps_emoticons():
+    """ This function will check if clean_text keeps emoticons in original text """
+    text = "emoticons like :-) or (: or ;-) can be very informative to models"
+    output = clean_text(text)
+    assert output == text

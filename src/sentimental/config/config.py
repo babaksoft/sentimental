@@ -9,9 +9,9 @@ MLFLOW_TRACKING_URI = "http://localhost:5000/"
 PACKAGE_ROOT = Path(__file__).resolve().parent.parent
 
 # Path config
-DATA_PATH = PACKAGE_ROOT / "data"
-MODEL_PATH = PACKAGE_ROOT / "model"
-METRICS_PATH = PACKAGE_ROOT / "metrics"
+DATA_DIR = PACKAGE_ROOT / "data"
+MODEL_DIR = PACKAGE_ROOT / "model"
+METRICS_DIR = PACKAGE_ROOT / "metrics"
 
 # Data ingestion config
 TARGET = "status" # Needs stratification

@@ -1,4 +1,4 @@
-import re
+import os, re
 
 import numpy as np
 import pandas as pd
@@ -62,22 +62,24 @@ def clean_text(text: str) -> str:
     cleaned = re.sub(r"\s+", " ", cleaned)
 
     # Remove tokens with non-ASCII characters (including emojis)
-    cleaned = " ".join([word for word in cleaned.split(" ") if word.isascii()])
+    cleaned = " ".join([
+        word for word in cleaned.split(" ") if word.isascii()
+    ])
 
     return cleaned
 
 
-def statement_transform(x):
+def transform_statement(x):
     values = get_values(x)
     return np.array([
         clean_text(text) for text in values
-    ]).reshape(-1, 1)
+    ])
 
 
 def build_pipeline() -> ColumnTransformer:
     text_pipeline = Pipeline([
-        ("clean", FunctionTransformer(
-            func=statement_transform,
+        ("transform", FunctionTransformer(
+            func=transform_statement,
             feature_names_out="one-to-one"
         )),
         ("vectorize", TfidfVectorizer(
@@ -90,3 +92,21 @@ def build_pipeline() -> ColumnTransformer:
     return ColumnTransformer([
         ("text", text_pipeline, config.FEATURE)
     ])
+
+
+def smoke_test():
+    train_path = config.DATA_DIR / "prepared" / config.TRAIN_FILE
+    if not os.path.exists(train_path):
+        raise FileNotFoundError(
+            "Train data not found. Please run ingest.py first."
+        )
+    df_train = pd.read_csv(train_path, names=[config.FEATURE, config.TARGET])
+    x_train = df_train.drop(config.TARGET, axis=1)
+    print(f"Pipeline input shape : {x_train.shape}")
+    pipeline = build_pipeline()
+    x_train = pipeline.fit_transform(x_train)
+    print(f"Pipeline output shape : {x_train.shape}")
+
+
+if __name__ == "__main__":
+    smoke_test()
