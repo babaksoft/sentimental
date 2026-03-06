@@ -1,3 +1,6 @@
+import os
+from pathlib import Path
+
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
@@ -10,6 +13,27 @@ def feature_target_split(csv_path):
     x = data.drop(config.TARGET, axis=1)
     y = data[config.TARGET]
     return x, y
+
+
+def get_data(split_name: str = "train"):
+    files = {
+        "train": config.TRAIN_FILE,
+        "validation": config.VALIDATION_FILE,
+        "test": config.TEST_FILE
+    }
+    name = split_name.lower()
+    if name in files:
+        file = files[name]
+    else:
+        file = config.TRAIN_FILE
+
+    path = Path(config.DATA_DIR) / "prepared" / file
+    if not os.path.exists(path):
+        raise FileNotFoundError(
+            "Dataset not found. Please run ingest.py first.")
+
+    df = pd.read_csv(path, names=[config.FEATURE, config.TARGET])
+    return df
 
 
 # Plot confusion matrix using a default matplotlib colormap

@@ -1,6 +1,6 @@
 outs:
-- md5: ac7cb9891c46c8be434a22236eadd7fa.dir
-  size: 39228
-  nfiles: 1
+- md5: c0e60c91d622d259693d8d0d8e43110f.dir
+  size: 1383983
+  nfiles: 3
   hash: md5
   path: mlartifacts
