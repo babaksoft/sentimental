@@ -50,7 +50,7 @@ def run_pipeline():
     vectorize(x_raw, run_name="Raw", clean=False)
 
     vectorize(x_raw, run_name="Preprocessed", clean=True)
-    print(f"Experiment '{experiment_name}' successfully completed.")
+    print(f"[INFO] Experiment '{experiment_name}' successfully completed.")
 
 
 if __name__ == "__main__":
