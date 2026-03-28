@@ -1,4 +1,5 @@
-import os, re
+import os
+import re
 
 import numpy as np
 import pandas as pd
@@ -28,7 +29,7 @@ def get_values(x):
 
 
 def replace_expanded(match: re.Match) -> str:
-    expanded = match.string[match.span()[0]:match.span()[1]]
+    expanded = match.string[match.span()[0] : match.span()[1]]
     return expanded.replace(" ", "")
 
 
@@ -62,44 +63,39 @@ def clean_text(text: str) -> str:
     cleaned = re.sub(r"\s+", " ", cleaned)
 
     # Remove tokens with non-ASCII characters (including emojis)
-    cleaned = " ".join([
-        word for word in cleaned.split(" ") if word.isascii()
-    ])
+    cleaned = " ".join([word for word in cleaned.split(" ") if word.isascii()])
 
     return cleaned
 
 
 def transform_statement(x):
     values = get_values(x)
-    return np.array([
-        clean_text(text) for text in values
-    ])
+    return np.array([clean_text(text) for text in values])
 
 
 def build_pipeline() -> ColumnTransformer:
-    text_pipeline = Pipeline([
-        ("transform", FunctionTransformer(
-            func=transform_statement,
-            feature_names_out="one-to-one"
-        )),
-        ("vectorize", TfidfVectorizer(
-            strip_accents=None,
-            lowercase=False,
-            preprocessor=None
-        ))
-    ])
+    text_pipeline = Pipeline(
+        [
+            (
+                "transform",
+                FunctionTransformer(
+                    func=transform_statement, feature_names_out="one-to-one"
+                ),
+            ),
+            (
+                "vectorize",
+                TfidfVectorizer(strip_accents=None, lowercase=False, preprocessor=None),
+            ),
+        ]
+    )
 
-    return ColumnTransformer([
-        ("text", text_pipeline, config.FEATURE)
-    ])
+    return ColumnTransformer([("text", text_pipeline, config.FEATURE)])
 
 
 def smoke_test():
     train_path = config.DATA_DIR / "prepared" / config.TRAIN_FILE
     if not os.path.exists(train_path):
-        raise FileNotFoundError(
-            "Train data not found. Please run ingest.py first."
-        )
+        raise FileNotFoundError("Train data not found. Please run ingest.py first.")
     df_train = pd.read_csv(train_path, names=[config.FEATURE, config.TARGET])
     x_train = df_train.drop(config.TARGET, axis=1)
     print(f"Pipeline input shape : {x_train.shape}")

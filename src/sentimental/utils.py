@@ -19,7 +19,7 @@ def get_data(split_name: str = "train"):
     files = {
         "train": config.TRAIN_FILE,
         "validation": config.VALIDATION_FILE,
-        "test": config.TEST_FILE
+        "test": config.TEST_FILE,
     }
     name = split_name.lower()
     if name in files:
@@ -29,8 +29,7 @@ def get_data(split_name: str = "train"):
 
     path = Path(config.DATA_DIR) / "prepared" / file
     if not os.path.exists(path):
-        raise FileNotFoundError(
-            "Dataset not found. Please run ingest.py first.")
+        raise FileNotFoundError("Dataset not found. Please run ingest.py first.")
 
     df = pd.read_csv(path, names=[config.FEATURE, config.TARGET])
     return df
@@ -41,14 +40,12 @@ def plot_confusion_matrix(pipeline, x, y, normalize=None):
     cmap = "summer"
     y_predict = pipeline.predict(x)
     clf = pipeline.named_steps["classifier"]
-    cm = confusion_matrix(
-        y, y_predict, labels=clf.classes_, normalize=normalize
-    )
+    cm = confusion_matrix(y, y_predict, labels=clf.classes_, normalize=normalize)
     cm_display = ConfusionMatrixDisplay(
         confusion_matrix=cm, display_labels=clf.classes_
     )
 
     cm_display.plot(cmap=cmap)
-    path = config.METRICS_DIR / f"cm_baseline.png"
+    path = config.METRICS_DIR / "cm_baseline.png"
     plt.savefig(path)
     plt.close()

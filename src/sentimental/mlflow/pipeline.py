@@ -16,7 +16,7 @@ def vectorize(x, run_name, clean=False):
         params: dict[str, Any] = {
             "strip_accents": None,
             "lowercase": False,
-            "preprocessor": None
+            "preprocessor": None,
         }
 
         vectorizer = TfidfVectorizer(**params)
@@ -25,11 +25,10 @@ def vectorize(x, run_name, clean=False):
             x = x.map(lambda text: clean_text(text))
         x_trans = vectorizer.fit_transform(x)
         end = datetime.now()
-        params = { f"tfidf_{key}": val for key, val in params.items() }
-        params.update({
-            "pipe_feature_count": x_trans.shape[1],
-            "pipe_duration": str(end - start)
-        })
+        params = {f"tfidf_{key}": val for key, val in params.items()}
+        params.update(
+            {"pipe_feature_count": x_trans.shape[1], "pipe_duration": str(end - start)}
+        )
 
         mlflow.log_params(params)
         mlflow.end_run()
@@ -41,9 +40,7 @@ def run_pipeline():
     mlflow.set_experiment(experiment_name=experiment_name)
     train_path = config.DATA_DIR / "prepared" / config.TRAIN_FILE
     if not os.path.exists(train_path):
-        raise FileNotFoundError(
-            "Train data not found. Please run ingest.py first."
-        )
+        raise FileNotFoundError("Train data not found. Please run ingest.py first.")
 
     df = pd.read_csv(train_path, names=[config.FEATURE, config.TARGET])
     x_raw = df[config.FEATURE]

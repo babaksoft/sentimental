@@ -15,13 +15,13 @@ METRICS_DIR = PACKAGE_ROOT / "metrics"
 ARTIFACTS_DIR = PACKAGE_ROOT / "artifacts"
 
 # Data ingestion config
-TARGET = "status" # Needs stratification
+TARGET = "status"  # Needs stratification
 RAW_FILE = "mental_health.csv"
 TRAIN_FILE = "train.csv"
 VALIDATION_FILE = "validation.csv"
 TEST_FILE = "test.csv"
-TRAIN_TEST_SPLIT = 0.3 # Train : 70%
-TEST_VAL_SPLIT = 0.5   # Val : 15% , Test : 15%
+TRAIN_TEST_SPLIT = 0.3  # Train : 70%
+TEST_VAL_SPLIT = 0.5  # Val : 15% , Test : 15%
 
 # Preprocessing pipeline config
 FEATURE = "statement"

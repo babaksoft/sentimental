@@ -19,7 +19,7 @@ def drop_missing(df: pd.DataFrame) -> pd.DataFrame:
             "dataset_size": len(df),
             "missing_count": drop_count,
             "missing_percent": drop_percent,
-            "cleaned_size": len(df_no_missing)
+            "cleaned_size": len(df_no_missing),
         }
         mlflow.log_metrics(metrics)
         mlflow.end_run()
@@ -38,7 +38,7 @@ def drop_duplicates(df: pd.DataFrame) -> pd.DataFrame:
             "dataset_size": len(df),
             "duplicate_count": drop_count,
             "duplicate_percent": drop_percent,
-            "cleaned_size": len(df_no_dupes)
+            "cleaned_size": len(df_no_dupes),
         }
         mlflow.log_metrics(metrics)
         mlflow.end_run()
@@ -59,12 +59,10 @@ def drop_conflicts(df: pd.DataFrame) -> pd.DataFrame:
     data.merge(df_conflict, on=features, how="inner")
 
     # Step 3 : Remove conflicting rows
-    df_no_conflict = data.merge(
-        df_conflict, on=features, how="left", indicator=True
+    df_no_conflict = data.merge(df_conflict, on=features, how="left", indicator=True)
+    df_no_conflict = df_no_conflict[df_no_conflict["_merge"] == "left_only"].drop(
+        columns="_merge"
     )
-    df_no_conflict = df_no_conflict[
-        df_no_conflict["_merge"] == "left_only"
-    ].drop(columns="_merge")
 
     with mlflow.start_run(run_name="Fix label noise") as run:
         mlflow.set_tag("run_id", run.info.run_id)
@@ -74,7 +72,7 @@ def drop_conflicts(df: pd.DataFrame) -> pd.DataFrame:
             "dataset_size": len(df),
             "noisy_label_count": noise_count,
             "noisy_label_percent": noise_percent,
-            "cleaned_size": len(df_no_conflict)
+            "cleaned_size": len(df_no_conflict),
         }
         mlflow.log_metrics(metrics)
         mlflow.end_run()
@@ -94,12 +92,16 @@ def ingest(raw_path, to_dir):
     df = drop_conflicts(df)
 
     df_train, df_test = train_test_split(
-        df, test_size=config.TRAIN_TEST_SPLIT,
-        stratify=df[config.TARGET], random_state=rs
+        df,
+        test_size=config.TRAIN_TEST_SPLIT,
+        stratify=df[config.TARGET],
+        random_state=rs,
     )
     df_val, df_test = train_test_split(
-        df_test, test_size=config.TEST_VAL_SPLIT,
-        stratify=df_test[config.TARGET], random_state=rs
+        df_test,
+        test_size=config.TEST_VAL_SPLIT,
+        stratify=df_test[config.TARGET],
+        random_state=rs,
     )
 
     df_train.to_csv(to_dir / config.TRAIN_FILE, header=False, index=False)
@@ -115,22 +117,22 @@ def ingest(raw_path, to_dir):
             "random_state": rs,
             "train_size": len(df_train),
             "val_size": len(df_val),
-            "test_size": len(df_test)
+            "test_size": len(df_test),
         }
         mlflow.log_metrics(metrics)
         mlflow.end_run()
 
 
 def main():
-    to_dir = config.DATA_PATH / "prepared"
+    to_dir = config.DATA_DIR / "prepared"
     if os.path.exists(to_dir / config.TRAIN_FILE):
         print("[INFO] Dataset is already ingested.")
         return
 
-    raw_path = config.DATA_PATH / "raw" / config.RAW_FILE
+    raw_path = config.DATA_DIR / "raw" / config.RAW_FILE
     ingest(raw_path, to_dir)
     print("[INFO] Raw dataset was successfully ingested.")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
