@@ -19,7 +19,7 @@
 - Remove tokens with non-ASCII characters
 - Transform with TfidfVectorizer
 
-## Spacial cases
+## Special cases
 - Remove Unicode emojis
   - Example : 🥲
 - Keep character emoticons

@@ -8,13 +8,6 @@ from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from .config import config
 
 
-def feature_target_split(csv_path):
-    data = pd.read_csv(csv_path)
-    x = data.drop(config.TARGET, axis=1)
-    y = data[config.TARGET]
-    return x, y
-
-
 def get_data(split_name: str = "train"):
     files = {
         "train": config.TRAIN_FILE,

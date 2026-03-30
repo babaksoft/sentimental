@@ -1,18 +1,12 @@
 import os
 from pathlib import Path
 
-from sklearn.pipeline import make_pipeline
-
 from .config import config
-from .pipeline import build_pipeline
-from .utils import feature_target_split
 
 
 def train(data_path):
-    x_train, y_train = feature_target_split(data_path)
-    full_pipeline = make_pipeline(build_pipeline(), config.BASELINE_MODEL)
-
-    full_pipeline.fit(x_train, y_train)
+    _ = data_path
+    pass
 
 
 def main():
