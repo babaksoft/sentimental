@@ -10,6 +10,7 @@ from .config import config
 def drop_missing(df: pd.DataFrame) -> pd.DataFrame:
     with mlflow.start_run(run_name="Drop missing") as run:
         mlflow.set_tag("run_id", run.info.run_id)
+        mlflow.set_tag("drop_reason", "missing")
 
         df_no_missing = df.dropna(axis=0)
         drop_count = len(df) - len(df_no_missing)
@@ -29,6 +30,7 @@ def drop_missing(df: pd.DataFrame) -> pd.DataFrame:
 def drop_duplicates(df: pd.DataFrame) -> pd.DataFrame:
     with mlflow.start_run(run_name="Drop duplicates") as run:
         mlflow.set_tag("run_id", run.info.run_id)
+        mlflow.set_tag("drop_reason", "duplicate")
 
         df_no_dupes = df.drop_duplicates()
         drop_count = len(df) - len(df_no_dupes)
@@ -66,6 +68,8 @@ def drop_conflicts(df: pd.DataFrame) -> pd.DataFrame:
 
     with mlflow.start_run(run_name="Fix label noise") as run:
         mlflow.set_tag("run_id", run.info.run_id)
+        mlflow.set_tag("drop_reason", "label_conflict")
+
         noise_count = len(df) - len(df_no_conflict)
         noise_percent = round(100 * noise_count / len(df), 2)
         metrics = {
@@ -110,6 +114,7 @@ def ingest(raw_path, to_dir):
 
     with mlflow.start_run(run_name="Split dataset") as run:
         mlflow.set_tag("run_id", run.info.run_id)
+        mlflow.set_tag("split_strategy", "stratified")
         metrics = {
             "dataset_size": len(df),
             "train_test_split": config.TRAIN_TEST_SPLIT,

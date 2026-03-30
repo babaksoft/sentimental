@@ -21,19 +21,19 @@ def set_version_tags():
     mlflow.set_tags(tags)
 
 
-def set_version_params():
+def set_version_metrics():
     df = pd.read_csv(config.DATA_DIR / "raw" / config.RAW_FILE)
     df_train = get_data("train")
     df_val = get_data("validation")
     df_test = get_data("test")
-    params = {
+    metrics = {
         "raw_size": len(df),
         "cleaned_size": len(df_train) + len(df_val) + len(df_test),
         "train_size": len(df_train),
         "val_size": len(df_val),
         "test_size": len(df_test),
     }
-    mlflow.log_params(params)
+    mlflow.log_metrics(metrics)
 
 
 def set_version_artifacts(pipeline):
@@ -55,7 +55,7 @@ def mlflow_register():
     with mlflow.start_run(run_name=f"Pipeline {config.PIPELINE_VERSION}") as run:
         mlflow.set_tag("run_id", run.info.run_id)
         set_version_tags()
-        set_version_params()
+        set_version_metrics()
 
         train_path = config.DATA_DIR / "prepared" / config.TRAIN_FILE
         df_train = pd.read_csv(train_path, names=[config.FEATURE, config.TARGET])
