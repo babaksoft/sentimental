@@ -2,3 +2,5 @@
     remote = local_storage
 ['remote "local_storage"']
     url = ../../_sent_dvc_
+['remote "aws_storage"']
+    url = s3://babaksoft/ml-portfolio/sentimental/dvc_sync
